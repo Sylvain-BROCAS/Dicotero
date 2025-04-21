@@ -1,19 +1,10 @@
-import { config } from 'dotenv';
-import { Library } from './models/Library';
+import { Library } from 'zotero-ts-api';
 
-// Charger les variables d'environnement
-config();
-
-// Récupérer les variables d'environnement
+// Utilisation de la classe Library
 const apiKey = process.env.ZOTERO_API_KEY;
 const id = process.env.ZOTERO_GROUP_ID;
-const type = `groups`
+const type = 'groups';
 
-if (!apiKey || !id || !type) {
-  throw new Error('ZOTERO_API_KEY, ZOTERO_ID, and ZOTERO_TYPE must be set in the .env file');
-}
-
-// Exemple d'utilisation
 (async () => {
   const library = new Library(apiKey, id, type);
   await library.connect();
@@ -30,6 +21,5 @@ if (!apiKey || !id || !type) {
     console.log(`Item Key: ${item.key}`);
     console.log(`Title: ${item.title}`);
     console.log(`Item Type: ${item.itemType}`);
-    // item.delete(); // Suppression de l'élément    
   });
 })();
