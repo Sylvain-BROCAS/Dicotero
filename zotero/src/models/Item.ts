@@ -83,7 +83,8 @@ export class Item {
     const response = await fetch(`${this.baseUrl}/items/${this.data.key}`, {
       method: 'DELETE',
       headers: {
-        'Zotero-API-Key': this.apiKey
+        'Zotero-API-Key': this.apiKey,
+        'If-Unmodified-Since-Version': this.data.version.toString()
       }
     });
 

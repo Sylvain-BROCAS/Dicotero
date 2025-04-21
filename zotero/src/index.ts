@@ -30,6 +30,6 @@ if (!apiKey || !id || !type) {
     console.log(`Item Key: ${item.key}`);
     console.log(`Title: ${item.title}`);
     console.log(`Item Type: ${item.itemType}`);
-    item.delete(); // Suppression de l'élément    
+    // item.delete(); // Suppression de l'élément    
   });
 })();

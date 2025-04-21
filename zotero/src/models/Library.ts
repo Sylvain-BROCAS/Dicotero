@@ -1,13 +1,14 @@
 import { ILibraryData } from '../interfaces/ILibraryData';
 import { ICollectionData } from '../interfaces/ICollectionData';
+import { IZoteroAPIResponseItem } from '../interfaces/IZoteroAPIResponseItem';
 import { IItemData } from '../interfaces/IItemData';
 import { ZCollection } from './ZCollection';
 import { Item } from './Item';
 
 export class Library {
   private apiKey: string;
-  private libId: string; // Renommé pour éviter le conflit
-  private libraryType: 'users' | 'groups'; // Renommé pour éviter le conflit
+  private libId: string;
+  private libraryType: 'users' | 'groups';
   private baseUrl: string;
   private libraryData?: ILibraryData;
 
@@ -56,7 +57,7 @@ export class Library {
     }
 
     const collectionsData = await response.json();
-    return collectionsData.map((collectionData: ICollectionData) => 
+    return collectionsData.map((collectionData: ICollectionData) =>
       new ZCollection(collectionData, this.apiKey, this.libId, this.libraryType)
     );
   }
@@ -72,16 +73,16 @@ export class Library {
       throw new Error('Failed to fetch items');
     }
 
-    const itemsData = await response.json();
-    return itemsData.map((itemData: IItemData) => 
-      new Item(itemData, this.apiKey, this.libId, this.libraryType)
+    const itemsData: IZoteroAPIResponseItem[] = await response.json();
+    return itemsData.map((item) =>
+      new Item(item.data, this.apiKey, this.libId, this.libraryType)
     );
   }
 
   async createCollection(name: string, parentCollection?: string): Promise<ZCollection> {
     const collectionData: ICollectionData = {
-      key: '', // Will be assigned by Zotero
-      version: 0, // Will be assigned by Zotero
+      key: '',
+      version: 0,
       name,
       parentCollection
     };
@@ -120,14 +121,14 @@ export class Library {
         'Zotero-API-Key': this.apiKey,
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify(newItemData)
+      body: JSON.stringify([{ data: newItemData }]) // 👈 le corps attendu est un tableau d'objets avec "data"
     });
 
     if (!response.ok) {
       throw new Error('Failed to create item');
     }
 
-    const createdItem = await response.json();
-    return new Item(createdItem, this.apiKey, this.libId, this.libraryType);
+    const createdItems: IZoteroAPIResponseItem[] = await response.json();
+    return new Item(createdItems[0].data, this.apiKey, this.libId, this.libraryType); // 👈 attention, c’est un tableau
   }
 }
