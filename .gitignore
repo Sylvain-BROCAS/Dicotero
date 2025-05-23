@@ -2,3 +2,5 @@
 *.json
 /node_modules
 /zotero/node_modules
+/build
+/node_modules
